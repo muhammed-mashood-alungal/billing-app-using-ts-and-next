@@ -54,5 +54,36 @@ class ProductService {
             }
         });
     }
+    getAllProductsService() {
+        return __awaiter(this, void 0, void 0, function* () {
+            try {
+                const products = yield product_model_1.default.findAll();
+                if (products.length === 0) {
+                    return null;
+                }
+                return products;
+            }
+            catch (error) {
+                throw new Error(error.message);
+            }
+        });
+    }
+    deleteProductService(productId) {
+        return __awaiter(this, void 0, void 0, function* () {
+            try {
+                const deletedCount = yield product_model_1.default.destroy({
+                    where: {
+                        id: productId,
+                    },
+                });
+                if (deletedCount === 0) {
+                    throw new Error('Product not found');
+                }
+            }
+            catch (error) {
+                throw new Error(error.message);
+            }
+        });
+    }
 }
 exports.default = ProductService;

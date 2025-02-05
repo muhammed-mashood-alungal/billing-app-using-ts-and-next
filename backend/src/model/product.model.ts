@@ -6,7 +6,7 @@ class Product extends Model {
   public code!: string;
   public name!: string;
   public category!: string;
-  public size!: number;
+  public size!: string;
   public color!: string;
   public price!: number;
   public stock!: number;

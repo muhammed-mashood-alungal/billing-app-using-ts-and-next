@@ -15,7 +15,7 @@ import {
 import { styled } from '@mui/material/styles';
 import axios from 'axios';
 import Link from 'next/link';
-import { useRouter } from 'next/router';
+import { useRouter } from 'next/navigation';
 
 interface ProductData {
     id: number;
@@ -161,7 +161,7 @@ const CreateProduct: React.FC<CreateProductProps> = () => {
             });
             return false
         }
-        if (productData.price > 0) {
+        if (productData.price < 0) {
             setNotification({
                 open: true,
                 message: 'Enter a valid Price',
@@ -177,7 +177,7 @@ const CreateProduct: React.FC<CreateProductProps> = () => {
             });
             return false
         }
-        if (productData.stock > 0) {
+        if (productData.stock < 0) {
             setNotification({
                 open: true,
                 message: 'Enter a valid stock',

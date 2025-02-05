@@ -32,5 +32,32 @@ class ProductService {
             throw new Error(error.message)
         }
     }
+    async getAllProductsService(): Promise<productData[] | null> {
+        try {
+            const products = await Product.findAll()
+            if (products.length === 0) {
+                return null
+            }
+            return products
+        } catch (error: any) {
+            throw new Error(error.message)
+        }
+    }
+    async deleteProductService(productId: string): Promise<void> {
+        try {
+            const deletedCount = await Product.destroy({
+                where: {
+                    id: productId,
+                },
+            })
+
+            if (deletedCount === 0) {
+                throw new Error('Product not found')
+            }
+        } catch (error: any) {
+            throw new Error(error.message);
+        }
+    }
+    
 }
 export default ProductService

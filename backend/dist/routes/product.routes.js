@@ -9,7 +9,9 @@ const product_controller_1 = __importDefault(require("../controllers/product.con
 const productRouter = (0, express_1.Router)();
 const productService = new product_services_1.default();
 const productController = new product_controller_1.default(productService);
+productRouter.get('/', productController.getAllProdcuts);
 productRouter.post('/', productController.createProduct);
 productRouter.get('/:productId', productController.getProductData);
 productRouter.put('/:productId', productController.updateProductData);
+productRouter.delete('/:productId', productController.deleteProduct);
 exports.default = productRouter;

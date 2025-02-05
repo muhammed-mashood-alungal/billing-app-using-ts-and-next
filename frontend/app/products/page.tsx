@@ -1,59 +1,49 @@
 'use client'
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Table, TableBody, TableCell, TableHead, TableRow, TableContainer, TableSortLabel } from '@mui/material';
 import { Input } from '@mui/material';
 import { Button } from '@mui/material';
 import { Select, MenuItem } from '@mui/material';
-import { Grid, List, Search } from 'lucide-react';
+import { Axis3D, Grid, List, Search } from 'lucide-react';
 import Link from 'next/link';
+import axios from 'axios';
 
 
 type Product = {
     id: string;
     name: string;
-    sku: string;
+    code: string;
     price: number;
     stock: number;
     category: string;
     description: string;
+    createdAt?:string;
 };
 
 export default function ProductsList() {
+   
 
-    const [products] = useState<Product[]>([
-        {
-            id: '1',
-            name: 'Office Chair',
-            sku: 'CHR-001',
-            price: 199.99,
-            stock: 23,
-            category: 'Furniture',
-            description: 'Ergonomic office chair with lumbar support'
-        },
-        {
-            id: '2',
-            name: 'Desk Lamp',
-            sku: 'LMP-002',
-            price: 49.99,
-            stock: 45,
-            category: 'Lighting',
-            description: 'LED desk lamp with adjustable brightness'
-        },
-        // Add more sample products as needed
-    ]);
+    useEffect(()=>{
+       async function fetchAllProducts(){
+         const {data} = await axios.get('http://localhost:5000/api/products')
+         setProducts(data.products)
+       }
+       fetchAllProducts()
+    },[])
+    const [products,setProducts] = useState<Product[]>([])
 
     const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
     const [searchQuery, setSearchQuery] = useState('');
     const [sortBy, setSortBy] = useState('name');
 
-    // Filter products based on search query
-    const filteredProducts = products.filter(product =>
-        product.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        product.sku.toLowerCase().includes(searchQuery.toLowerCase())
+    
+    const filteredProducts = products?.filter(product =>
+        product.name.toLowerCase().includes(searchQuery.toLowerCase())
     );
 
-    // Sort products based on selected criterion
-    const sortedProducts = [...filteredProducts].sort((a, b) => {
+    
+    const sortedProducts = filteredProducts ?
+    [...filteredProducts]?.sort((a, b) => {
         switch (sortBy) {
             case 'price':
                 return a.price - b.price;
@@ -62,7 +52,18 @@ export default function ProductsList() {
             default:
                 return a.name.localeCompare(b.name);
         }
-    });
+    }) : []
+
+    const deleteProduct=async(productId : string ) : Promise<void> =>{
+          try{
+            await axios.delete(`http://localhost:5000/api/products/${productId}`)
+            setProducts((prds)=>{
+                return prds.filter((x)=> x.id != productId)
+            })
+          }catch(error){
+            // console.log('Something Went Wrong')
+          }
+    }
 
     return (
         <div className="space-y-6">
@@ -112,25 +113,24 @@ export default function ProductsList() {
                 </div>
             </div>
 
-            {/* Table view for product list */}
             <TableContainer className="mt-4">
                 <Table>
                     <TableHead>
                         <TableRow>
                             <TableCell>Product Name</TableCell>
-                            <TableCell>SKU</TableCell>
+                            <TableCell>Code</TableCell>
                             <TableCell>Price</TableCell>
                             <TableCell>Stock</TableCell>
                             <TableCell>Category</TableCell>
-                            <TableCell>Description</TableCell>
+                            <TableCell>Added At</TableCell>
                             <TableCell>Actions</TableCell>
                         </TableRow>
                     </TableHead>
                     <TableBody>
-                        {sortedProducts.map((product) => (
+                        {sortedProducts?.map((product) => (
                             <TableRow key={product.id}>
                                 <TableCell>{product.name}</TableCell>
-                                <TableCell>{product.sku}</TableCell>
+                                <TableCell>{product.code}</TableCell>
                                 <TableCell>${product.price.toFixed(2)}</TableCell>
                                 <TableCell>
                                     <span className={`px-2 py-1 rounded text-sm ${product.stock > 10
@@ -141,10 +141,15 @@ export default function ProductsList() {
                                     </span>
                                 </TableCell>
                                 <TableCell>{product.category}</TableCell>
-                                <TableCell>{product.description}</TableCell>
+                                <TableCell>{product.createdAt}</TableCell>
                                 <TableCell>
+                                    <Link href={`/products/update/${product.id}`}>
                                     <Button variant="outlined" size="small">Edit</Button>
-                                    <Button variant="outlined" color="error" size="small" className="ml-2">Delete</Button>
+                                    </Link>
+                                    
+                                    <Button variant="outlined" color="error" size="small" className="ml-2" 
+                                    onClick={()=>{deleteProduct(product.id)}}
+                                    >Delete</Button>
                                 </TableCell>
                             </TableRow>
                         ))}
