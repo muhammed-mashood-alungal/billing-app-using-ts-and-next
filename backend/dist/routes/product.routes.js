@@ -7,6 +7,7 @@ const express_1 = require("express");
 const product_services_1 = __importDefault(require("../services/product.services"));
 const product_controller_1 = __importDefault(require("../controllers/product.controller"));
 const productRouter = (0, express_1.Router)();
-const productController = new product_controller_1.default(new product_services_1.default);
+const productService = new product_services_1.default();
+const productController = new product_controller_1.default(productService);
 productRouter.post('/', productController.createProduct);
 exports.default = productRouter;

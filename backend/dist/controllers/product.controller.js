@@ -10,17 +10,17 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 class ProductController {
-    constructor(service) {
-        this.productService = service;
-    }
-    createProduct(req, res) {
-        return __awaiter(this, void 0, void 0, function* () {
+    constructor(productService) {
+        this.productService = productService;
+        this.createProduct = (req, res) => __awaiter(this, void 0, void 0, function* () {
             try {
+                console.log(req.body);
                 const productData = req.body;
-                this.productService.create(productData);
+                yield this.productService.create(productData);
                 res.status(201).json({ success: true, message: "Created Successfully" });
             }
             catch (error) {
+                console.log(error);
                 res.status(500).json({ success: false, message: error.message || "Something Went Wrong" });
             }
         });

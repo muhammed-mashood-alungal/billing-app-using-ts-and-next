@@ -13,11 +13,11 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const product_model_1 = __importDefault(require("../model/product.model"));
-class productService {
+class ProductService {
     create(productData) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
-                const product = product_model_1.default.create(productData);
+                const product = yield product_model_1.default.create(productData);
                 return product;
             }
             catch (error) {
@@ -26,4 +26,4 @@ class productService {
         });
     }
 }
-exports.default = productService;
+exports.default = ProductService;

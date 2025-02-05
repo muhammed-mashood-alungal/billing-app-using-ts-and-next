@@ -1,17 +1,17 @@
 import { Request , Response } from "express";
-import productService from "../services/product.services";
-import productDataType from '../types/product.types'
+import ProductService from "../services/product.services";
 export default class ProductController {
-    private productService : productService; 
-    constructor( service : productService ){
-         this.productService  = service
-    }
-    async createProduct(req:Request , res:Response) : Promise<void>{
+
+    constructor(private productService: ProductService) {}
+
+     createProduct= async(req:Request , res:Response) : Promise<void> =>{
         try{
+            console.log(req.body)
             const productData   = req.body
-            this.productService.create(productData)
+            await  this.productService.create(productData)
             res.status(201).json({success : true , message : "Created Successfully"})
         }catch(error : any){
+            console.log(error)
             res.status(500).json({success:false , message : error.message || "Something Went Wrong"})
         }
         
