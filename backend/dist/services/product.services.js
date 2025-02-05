@@ -18,10 +18,39 @@ class ProductService {
         return __awaiter(this, void 0, void 0, function* () {
             try {
                 const product = yield product_model_1.default.create(productData);
-                return product;
+                return product.get();
             }
             catch (error) {
-                throw new Error('Error creating user: ' + error.message);
+                throw new Error(error.message);
+            }
+        });
+    }
+    getProduct(productId) {
+        return __awaiter(this, void 0, void 0, function* () {
+            try {
+                const product = yield product_model_1.default.findByPk(productId);
+                if (!product) {
+                    throw new Error("Product Not Found");
+                }
+                return product.get();
+            }
+            catch (error) {
+                throw new Error(error.message);
+            }
+        });
+    }
+    updateProductService(productId, productData) {
+        return __awaiter(this, void 0, void 0, function* () {
+            try {
+                const product = yield product_model_1.default.findByPk(productId);
+                if (!product) {
+                    throw new Error("Product Not Found");
+                }
+                const newProduct = yield product.update(productData);
+                return newProduct.get();
+            }
+            catch (error) {
+                throw new Error(error.message);
             }
         });
     }

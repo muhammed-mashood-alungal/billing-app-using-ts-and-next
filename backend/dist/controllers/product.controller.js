@@ -24,6 +24,35 @@ class ProductController {
                 res.status(500).json({ success: false, message: error.message || "Something Went Wrong" });
             }
         });
+        this.getProductData = (req, res) => __awaiter(this, void 0, void 0, function* () {
+            try {
+                const productId = req.params.productId;
+                if (!productId) {
+                    throw new Error("Product Is Not Defined");
+                }
+                const product = yield this.productService.getProduct(productId);
+                res.status(201).json({ success: true, message: "Created Successfully", productData: product });
+            }
+            catch (error) {
+                console.log(error);
+                res.status(500).json({ success: false, message: error.message || "Something Went Wrong" });
+            }
+        });
+        this.updateProductData = (req, res) => __awaiter(this, void 0, void 0, function* () {
+            try {
+                const productId = req.params.productId;
+                const productData = req.body;
+                if (!productId) {
+                    throw new Error("Product Is Not Defined");
+                }
+                const product = yield this.productService.updateProductService(productId, productData);
+                res.status(201).json({ success: true, message: "Created Successfully", productData: product });
+            }
+            catch (error) {
+                console.log(error);
+                res.status(500).json({ success: false, message: error.message || "Something Went Wrong" });
+            }
+        });
     }
 }
 exports.default = ProductController;

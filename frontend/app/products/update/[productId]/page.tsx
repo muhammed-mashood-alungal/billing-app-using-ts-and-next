@@ -1,4 +1,3 @@
-// src/components/CreateProduct.tsx
 'use client'
 import React, { useEffect, useState } from 'react';
 import {
@@ -15,6 +14,7 @@ import {
 import { styled } from '@mui/material/styles';
 import axios from 'axios';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import { useParams } from 'next/navigation';
 
 interface ProductData {
@@ -28,7 +28,7 @@ interface ProductData {
     stock: number;
     createdAt?: Date;
     updatedAt?: Date;
-}
+} 
 
 interface CreateProductProps {
     onSubmit: (data: Omit<ProductData, 'id' | 'createdAt' | 'updatedAt'>) => Promise<void>;
@@ -61,15 +61,34 @@ const colors = [
 ];
 
 const CreateProduct: React.FC<CreateProductProps> = () => {
-    const productId = useParams()
-    useEffect(()=>{
-      async function fetchProductDetails(){
-        console.log(productId)
-         const {data } = await axios.get(`http://localhost:5000/api/porducts/${productId}`)
-         setFormData(data?.productData)
-      }
-      fetchProductDetails()
-    },[])
+    
+    const router = useRouter()
+    const params = useParams()
+    const productId = params.productId as string; 
+    
+    useEffect(() => {
+        async function fetchProductDetails() {
+            if (productId) {
+                try {
+                    const { data } = await axios.get(`http://localhost:5000/api/products/${productId}`);
+                    setFormData({
+                        code: data.productData.code,
+                        name: data.productData.name,
+                        category: data.productData.category,
+                        size: data.productData.size,
+                        color: data.productData.color,
+                        price: data.productData.price.toString(),
+                        stock: data.productData.stock.toString(),
+                    });
+                } catch (error) {
+                    console.error('Failed to fetch product details', error);
+                }
+            }
+        }
+
+        fetchProductDetails();
+    }, [productId])
+
     const [formData, setFormData] = useState({
         code: '',
         name: '',
@@ -85,8 +104,8 @@ const CreateProduct: React.FC<CreateProductProps> = () => {
         open: false,
         message: '',
         severity: 'success' as 'success' | 'error',
-    });
-
+    })
+    
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const { name, value } = e.target;
         setFormData(prev => ({
@@ -109,13 +128,13 @@ const CreateProduct: React.FC<CreateProductProps> = () => {
             const isValid = validateForm(productData)
             if (!isValid) return
 
-            const response = await axios.post(`http://localhost:5000/api/products/${productId}`, productData)
-
+            const response = await axios.put(`http://localhost:5000/api/products/${productId}`, productData)
+            router.push('/products')
             setNotification({
                 open: true,
                 message: 'Product created successfully!',
                 severity: 'success',
-            });
+            })
 
             setFormData({
                 code: '',
@@ -169,7 +188,7 @@ const CreateProduct: React.FC<CreateProductProps> = () => {
             });
             return false
         }
-        if (productData.price > 0) {
+        if (productData.price < 0) {
             setNotification({
                 open: true,
                 message: 'Enter a valid Price',
@@ -185,7 +204,7 @@ const CreateProduct: React.FC<CreateProductProps> = () => {
             });
             return false
         }
-        if (productData.stock > 0) {
+        if (productData.stock < 0) {
             setNotification({
                 open: true,
                 message: 'Enter a valid stock',
@@ -319,7 +338,7 @@ const CreateProduct: React.FC<CreateProductProps> = () => {
                             variant="contained"
                             disabled={loading}
                         >
-                            {loading ? 'Creating...' : 'Create Product'}
+                            {loading ? 'updating...' : 'Update Product'}
                         </Button>
                     </Box>
                 </Box>

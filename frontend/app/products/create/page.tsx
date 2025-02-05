@@ -15,6 +15,7 @@ import {
 import { styled } from '@mui/material/styles';
 import axios from 'axios';
 import Link from 'next/link';
+import { useRouter } from 'next/router';
 
 interface ProductData {
     id: number;
@@ -75,8 +76,8 @@ const CreateProduct: React.FC<CreateProductProps> = () => {
         open: false,
         message: '',
         severity: 'success' as 'success' | 'error',
-    });
-
+    })
+    const router = useRouter();
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const { name, value } = e.target;
         setFormData(prev => ({
@@ -105,7 +106,8 @@ const CreateProduct: React.FC<CreateProductProps> = () => {
                 open: true,
                 message: 'Product created successfully!',
                 severity: 'success',
-            });
+            })
+            router.push('/products')
 
             setFormData({
                 code: '',
@@ -115,7 +117,7 @@ const CreateProduct: React.FC<CreateProductProps> = () => {
                 color: '',
                 price: '',
                 stock: '',
-            });
+            })
         } catch (error) {
             setNotification({
                 open: true,
