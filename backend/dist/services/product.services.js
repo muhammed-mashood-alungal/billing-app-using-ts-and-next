@@ -12,11 +12,18 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+const sequelize_1 = require("sequelize");
 const product_model_1 = __importDefault(require("../model/product.model"));
 class ProductService {
     create(productData) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
+                const isExist = yield product_model_1.default.findOne({
+                    where: { code: productData.code },
+                });
+                if (isExist) {
+                    throw new Error('The Product with this code already exists');
+                }
                 const product = yield product_model_1.default.create(productData);
                 return product.get();
             }
@@ -42,6 +49,15 @@ class ProductService {
     updateProductService(productId, productData) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
+                const isExist = yield product_model_1.default.findOne({
+                    where: {
+                        code: productData.code,
+                        id: { [sequelize_1.Op.ne]: productId }
+                    }
+                });
+                if (isExist) {
+                    throw new Error('The Product with this code already exists');
+                }
                 const product = yield product_model_1.default.findByPk(productId);
                 if (!product) {
                     throw new Error("Product Not Found");

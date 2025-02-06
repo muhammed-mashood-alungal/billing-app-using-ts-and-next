@@ -16,6 +16,7 @@ import axios from 'axios';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useParams } from 'next/navigation';
+import { axiosProductInstance } from '@/axios/instances';
 
 interface ProductData {
     id: number;
@@ -40,10 +41,10 @@ const FormContainer = styled(Paper)(({ theme }) => ({
 }));
 
 const categories = [
-    'Electronics',
-    'Clothing',
-    'Accessories',
-    'Home & Garden',
+    'Shirts',
+    'Party Wears',
+    'Western Tops',
+    'Pants',
     'Sports',
 ];
 
@@ -70,15 +71,17 @@ const CreateProduct: React.FC<CreateProductProps> = () => {
         async function fetchProductDetails() {
             if (productId) {
                 try {
-                    const { data } = await axios.get(`http://localhost:5000/api/products/${productId}`);
+                    console.log(productId)
+                    const { data } = await axiosProductInstance.get(`/${productId}`)
+                    console.log(data)
                     setFormData({
                         code: data.productData.code,
                         name: data.productData.name,
                         category: data.productData.category,
                         size: data.productData.size,
                         color: data.productData.color,
-                        price: data.productData.price.toString(),
-                        stock: data.productData.stock.toString(),
+                        price: data.productData.price?.toString(),
+                        stock: data.productData.stock?.toString(),
                     });
                 } catch (error) {
                     console.error('Failed to fetch product details', error);
@@ -128,7 +131,7 @@ const CreateProduct: React.FC<CreateProductProps> = () => {
             const isValid = validateForm(productData)
             if (!isValid) return
 
-            const response = await axios.put(`http://localhost:5000/api/products/${productId}`, productData)
+            const response = await axiosProductInstance.put(`/{productId}`, productData)
             router.push('/products')
             setNotification({
                 open: true,
@@ -145,10 +148,10 @@ const CreateProduct: React.FC<CreateProductProps> = () => {
                 price: '',
                 stock: '',
             });
-        } catch (error) {
+        } catch (error :any) {
             setNotification({
                 open: true,
-                message: 'Failed to create product. Please try again.',
+                message: error?.response?.data?.message || 'Failed to create product. Please try again.',
                 severity: 'error',
             });
         } finally {

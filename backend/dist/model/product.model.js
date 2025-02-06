@@ -16,6 +16,7 @@ Product.init({
     code: {
         type: sequelize_1.DataTypes.STRING,
         allowNull: false,
+        unique: true
     },
     name: {
         type: sequelize_1.DataTypes.STRING,

@@ -20,10 +20,12 @@ Product.init(
       type: DataTypes.INTEGER,
       autoIncrement: true,
       primaryKey: true,
+      
     },
     code: {
       type: DataTypes.STRING,
       allowNull: false,
+      unique:true
     },
     name: {
       type: DataTypes.STRING,
@@ -44,6 +46,7 @@ Product.init(
     },
     stock: {
       type: DataTypes.INTEGER,
+
     },
     createdAt: {
       type: DataTypes.DATE,

@@ -9,10 +9,11 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+const error_middleware_1 = require("../middlewares/error.middleware");
 class ProductController {
     constructor(productService) {
         this.productService = productService;
-        this.createProduct = (req, res) => __awaiter(this, void 0, void 0, function* () {
+        this.createProduct = (req, res, next) => __awaiter(this, void 0, void 0, function* () {
             try {
                 console.log(req.body);
                 const productData = req.body;
@@ -21,10 +22,10 @@ class ProductController {
             }
             catch (error) {
                 console.log(error);
-                res.status(500).json({ success: false, message: error.message || "Something Went Wrong" });
+                next(new error_middleware_1.AppError(error.message || "Something Went Wrong", 500));
             }
         });
-        this.getProductData = (req, res) => __awaiter(this, void 0, void 0, function* () {
+        this.getProductData = (req, res, next) => __awaiter(this, void 0, void 0, function* () {
             try {
                 const productId = req.params.productId;
                 if (!productId) {
@@ -35,10 +36,10 @@ class ProductController {
             }
             catch (error) {
                 console.log(error);
-                res.status(500).json({ success: false, message: error.message || "Something Went Wrong" });
+                next(new error_middleware_1.AppError(error.message || "Something Went Wrong", 500));
             }
         });
-        this.updateProductData = (req, res) => __awaiter(this, void 0, void 0, function* () {
+        this.updateProductData = (req, res, next) => __awaiter(this, void 0, void 0, function* () {
             try {
                 const productId = req.params.productId;
                 const productData = req.body;
@@ -49,19 +50,19 @@ class ProductController {
                 res.status(201).json({ success: true, message: "Updated Successfully", productData: product });
             }
             catch (error) {
-                res.status(500).json({ success: false, message: error.message || "Something Went Wrong" });
+                next(new error_middleware_1.AppError(error.message || "Something Went Wrong", 500));
             }
         });
-        this.getAllProdcuts = (req, res) => __awaiter(this, void 0, void 0, function* () {
+        this.getAllProdcuts = (req, res, next) => __awaiter(this, void 0, void 0, function* () {
             try {
                 const products = yield this.productService.getAllProductsService();
                 res.status(201).json({ success: true, message: "Fetched Successfully", products: products });
             }
             catch (error) {
-                res.status(500).json({ success: false, message: error.message || "Something Went Wrong" });
+                next(new error_middleware_1.AppError(error.message || "Something Went Wrong", 500));
             }
         });
-        this.deleteProduct = (req, res) => __awaiter(this, void 0, void 0, function* () {
+        this.deleteProduct = (req, res, next) => __awaiter(this, void 0, void 0, function* () {
             try {
                 const productId = req.params.productId;
                 if (!productId) {
@@ -71,7 +72,7 @@ class ProductController {
                 res.status(201).json({ success: true, message: "Deleted Successfully" });
             }
             catch (error) {
-                res.status(500).json({ success: false, message: error.message || "Something Went Wrong" });
+                next(new error_middleware_1.AppError(error.message || "Something Went Wrong", 500));
             }
         });
     }

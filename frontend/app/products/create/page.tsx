@@ -16,6 +16,7 @@ import { styled } from '@mui/material/styles';
 import axios from 'axios';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
+import { axiosProductInstance } from '@/axios/instances';
 
 interface ProductData {
     id: number;
@@ -40,10 +41,10 @@ const FormContainer = styled(Paper)(({ theme }) => ({
 }));
 
 const categories = [
-    'Electronics',
-    'Clothing',
-    'Accessories',
-    'Home & Garden',
+    'Shirts',
+    'Party Wears',
+    'Western Tops',
+    'Pants',
     'Sports',
 ];
 
@@ -100,7 +101,7 @@ const CreateProduct: React.FC<CreateProductProps> = () => {
             const isValid = validateForm(productData)
             if (!isValid) return
 
-            const response = await axios.post('http://localhost:5000/api/products', productData)
+            const response = await axiosProductInstance.post('/', productData)
 
             setNotification({
                 open: true,
@@ -118,10 +119,10 @@ const CreateProduct: React.FC<CreateProductProps> = () => {
                 price: '',
                 stock: '',
             })
-        } catch (error) {
+        } catch (error : any) {
             setNotification({
                 open: true,
-                message: 'Failed to create product. Please try again.',
+                message: error?.response?.data?.message || 'Failed to create product. Please try again.',
                 severity: 'error',
             });
         } finally {

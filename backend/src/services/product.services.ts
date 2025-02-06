@@ -1,8 +1,15 @@
+import { Op } from "sequelize";
 import Product from "../model/product.model";
 import productData from "../types/product.types";
 class ProductService {
     async create(productData: Omit<productData, 'id'>): Promise<productData | null> {
         try {
+            const isExist  = await Product.findOne({
+                where: { code: productData.code},
+              })
+              if(isExist){
+                throw new Error('The Product with this code already exists')
+              }
             const product = await Product.create(productData)
             return product.get()
         } catch (error: any) {
@@ -22,6 +29,15 @@ class ProductService {
     }
     async updateProductService(productId: string, productData: Partial<productData>): Promise<productData | null> {
         try {
+            const isExist  = await Product.findOne({
+                where: { 
+                    code: productData.code,
+                    id : {[Op.ne] : productId}
+                }
+              })
+              if(isExist){
+                throw new Error('The Product with this code already exists')
+              }
             const product = await Product.findByPk(productId)
             if (!product) {
                 throw new Error("Product Not Found")

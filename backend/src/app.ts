@@ -1,6 +1,7 @@
 import express from 'express'
 import productRouter from './routes/product.routes'
-import sequelize, { startServer } from './config/database';
+import  { startServer } from './config/database';
+import { errorHandler } from './middlewares/error.middleware';
 import cors from 'cors'
 const app = express()
 
@@ -14,6 +15,7 @@ app.use(express.json())
 
 app.use('/api/products',productRouter)
 
+app.use(errorHandler)
 startServer()
   
 export {app} 
